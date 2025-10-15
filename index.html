@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>AR Operating System v8.0 - Dynamic Target Names</title>
+    <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js/aframe/build/aframe-ar.js"></script>
+    <style>
+        body { margin: 0; overflow: hidden; font-family: 'Courier New', monospace; }
+        #startButton { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); padding: 20px 40px; font-size: 24px; background: linear-gradient(45deg, #00ffff, #0080ff); border: 2px solid #00ffff; color: white; cursor: pointer; border-radius: 10px; box-shadow: 0 0 30px rgba(0, 255, 255, 0.5); animation: pulse 2s infinite; z-index: 1001; font-weight: bold; text-transform: uppercase; letter-spacing: 2px; text-align: center; }
+        @keyframes pulse { 0% { box-shadow: 0 0 30px rgba(0, 255, 255, 0.5); } 50% { box-shadow: 0 0 50px rgba(0, 255, 255, 0.8), 0 0 100px rgba(0, 128, 255, 0.5); } 100% { box-shadow: 0 0 30px rgba(0, 255, 255, 0.5); } }
+        #info { position: fixed; top: 10px; left: 50%; transform: translateX(-50%); color: #00ffff; background: rgba(0, 0, 0, 0.7); padding: 10px 20px; border-radius: 5px; border: 1px solid #00ffff; font-size: 14px; z-index: 1000; display: none; text-align: center; transition: all 0.3s ease; }
+        .hud { position: fixed; color: #00ffff; font-size: 12px; background: rgba(0, 0, 0, 0.5); padding: 5px; border: 1px solid #00ffff; display: none; z-index: 1000; }
+        #hudTopLeft { top: 10px; left: 10px; } #hudTopRight { top: 10px; right: 10px; } #hudBottomLeft { bottom: 10px; left: 10px; } #hudBottomRight { bottom: 10px, right: 10px; }
+        
+        #reticle {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 30px;
+            height: 30px;
+            border: 3px solid #00ffff;
+            border-radius: 50%;
+            box-sizing: border-box;
+            opacity: 0.8;
+            z-index: 999;
+            display: none;
+            pointer-events: none;
+        }
+
+        #aimButton {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 15px 30px;
+            min-width: 280px; /* Ensure button is wide enough for names */
+            font-size: 16px; /* Slightly smaller to fit names */
+            font-family: 'Courier New', monospace;
+            background: rgba(0, 20, 34, 0.8);
+            border: 2px solid #00ffff;
+            color: #00ffff;
+            cursor: pointer;
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
+            z-index: 999;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: none;
+            transition: all 0.2s ease-in-out;
+            text-align: center;
+        }
+        
+        #aimButton.active {
+            color: #90ee90;
+            border-color: #00ff00;
+            background-color: rgba(0, 50, 20, 0.9);
+            box-shadow: 0 0 25px rgba(0, 255, 0, 0.8);
+        }
+
+    </style>
+</head>
+<body>
+    <button id="startButton" onclick="startAR()">INITIALIZE AR-OS</button>
+    <div id="info">Point the reticle at an object. The button will confirm the target.</div>
+    <div id="hudTopLeft" class="hud">SYSTEM: ONLINE</div>
+    <div id="hudTopRight" class="hud">FPS: <span id="fps">--</span></div>
+    <div id="hudBottomLeft" class="hud">WIDGETS: <span id="objectCount">7</span></div>
+    <div id="hudBottomRight" class="hud">MODE: INTERACTIVE</div>
+
+    <div id="reticle"></div>
+    <button id="aimButton">PROCESS AIM</button>
+
+    <a-scene 
+        id="arScene" 
+        style="display: none;" 
+        embedded 
+        arjs="sourceType: webcam; debugUIEnabled: false;" 
+        vr-mode-ui="enabled: false"
+        target-detector>
+        
+        <a-camera 
+            id="camera" 
+            position="0 1.6 0"
+            look-controls="magicWindowTrackingEnabled: true">
+        </a-camera>
+        
+        <!-- MODIFIED CODE: Added rotation="0 180 0" to flip the wall to the front. -->
+        <a-cylinder 
+            position="0 1.6 0" 
+            rotation="0 180 0"
+            radius="10" 
+            height="15" 
+            open-ended="true" 
+            theta-start="80" 
+            theta-length="200" 
+            material="color: #000814; side: back; shader: flat;">
+        </a-cylinder>
+
+        <a-entity id="ar-world">
+            <a-light type="ambient" color="#0066ff" intensity="0.5"></a-light>
+            <a-light type="point" position="0 5 0" color="#00ffff" intensity="0.8"></a-light>
+            
+            <a-entity id="icon-container" position="0 1.6 0"></a-entity>
+            <a-entity id="widget-container" position="0 1.6 0"></a-entity>
+            <a-entity id="particles"></a-entity>
+        </a-entity>
+    </a-scene>
+    
+    <script>
+        const widgetTemplates = {};
+        const iconData = [
+            { name: "MAIN CONSOLE", widget: "#widget-console", shape: '<a-box color="#001133" animation__rot="property: rotation; to: 0 360 0; dur: 10000; loop: true"></a-box>' },
+            { name: "DATA SPHERE", widget: "#widget-data", shape: '<a-sphere color="#003366" radius="0.4" wireframe="true" animation__rot="property: rotation; to: 360 0 0; dur: 8000; loop: true"></a-sphere>' },
+            { name: "NETWORK NODE", widget: "#widget-map", shape: '<a-dodecahedron color="#002244" radius="0.5" wireframe="true" animation__rot="property: rotation; to: 360 360 0; dur: 15000; loop: true"></a-dodecahedron>' },
+            { name: "SECURITY PYRAMID", widget: "#widget-console", shape: '<a-tetrahedron color="#003355" radius="0.5" animation__rot="property: rotation; to: 0 360 0; dur: 9000; loop: true"></a-tetrahedron>' },
+            { name: "ORBITAL RING", widget: "#widget-map", shape: '<a-torus color="#00ffff" radius="0.4" radius-tubular="0.1" opacity="0.6" animation__rot="property: rotation; to: 360 0 360; dur: 10000; loop: true"></a-torus>' },
+            { name: "CORE CRYSTAL", widget: "#widget-data", shape: '<a-octahedron color="#004466" radius="0.4" wireframe="true" animation__rot="property: rotation; to: 360 360 360; dur: 20000; loop: true"></a-octahedron>' },
+            { name: "SIGNAL BEACON", widget: "#widget-map", shape: '<a-cone color="#003344" radius-bottom="0.4" height="0.8" animation__rot="property: rotation; to: 0 360 0; dur: 7000; loop: true"></a-cone>' }
+        ];
+
+        let currentOpenWidget = null;
+        let logInterval = null;
+        let currentTarget = null; 
+
+        const logMessages = [ "> Encrypting...", "> Rerouting...", "> WARNING: Latency (178ms)", "> Quantum handshake...", "> Handshake successful.", "> Analyzing telemetry...", "> Anomaly detected.", "> Isolating...", ];
+        const mapTargets = [ { x: -0.8, y: 0.2 }, { x: 0.5, y: -0.3 }, { x: 0.1, y: 0.4 }];
+
+        AFRAME.registerComponent('target-detector', {
+            init: function () {
+                this.cameraEl = document.getElementById('camera');
+                this.iconContainer = document.getElementById('icon-container');
+                this.aimButton = document.getElementById('aimButton');
+                this.raycaster = new THREE.Raycaster();
+                this.centerScreen = new THREE.Vector2(0, 0);
+                this.defaultButtonText = "PROCESS AIM"; // Store default text
+            },
+            tick: function () {
+                if (!this.cameraEl || !this.iconContainer) return;
+                const camera = this.cameraEl.getObject3D('camera');
+                const objectsToCheck = Array.from(this.iconContainer.children).map(el => el.object3D);
+                if (!camera || objectsToCheck.length === 0) return;
+
+                this.raycaster.setFromCamera(this.centerScreen, camera);
+                const intersects = this.raycaster.intersectObjects(objectsToCheck, true);
+
+                let hitEl = null;
+                if (intersects.length > 0) {
+                    let tempEl = intersects[0].object.el;
+                    while (tempEl && !tempEl.classList.contains('interactive-icon')) {
+                        tempEl = tempEl.parentElement;
+                    }
+                    hitEl = tempEl;
+                }
+                
+                // --- THIS IS THE NEW DYNAMIC FEEDBACK LOGIC ---
+                if (hitEl) {
+                    // A target is being aimed at
+                    currentTarget = hitEl;
+                    const iconIndex = parseInt(hitEl.getAttribute('data-index'));
+                    const targetName = iconData[iconIndex].name;
+                    
+                    // Update button text and style
+                    this.aimButton.textContent = `PROCESS ${targetName}`;
+                    this.aimButton.classList.add('active');
+                } else {
+                    // Nothing is being aimed at
+                    currentTarget = null;
+
+                    // Revert button text and style
+                    this.aimButton.textContent = this.defaultButtonText;
+                    this.aimButton.classList.remove('active');
+                }
+            }
+        });
+
+        function startAR() {
+            const startButton = document.getElementById('startButton');
+            if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+                startButton.textContent = "REQUESTING PERMISSIONS...";
+                DeviceOrientationEvent.requestPermission().then(permissionState => {
+                    if (permissionState === 'granted') { runApp(); } else {
+                        startButton.textContent = "PERMISSION DENIED";
+                        alert("Motion & Orientation permission denied.");
+                    }
+                }).catch(err => {
+                    startButton.textContent = "ERROR";
+                    alert("An error occurred while requesting permissions.");
+                });
+            } else {
+                runApp();
+            }
+        }
+        
+        function runApp() {
+            document.getElementById('startButton').style.display = 'none';
+            document.querySelectorAll('.hud, #info, #arScene, #reticle, #aimButton').forEach(el => el.style.display = 'block');
+            createIcons();
+            setupInteractions();
+            startFPSCounter();
+            createParticles();
+        }
+        
+        function createIcons() {
+            const container = document.getElementById('icon-container');
+            const radius = 3.5; 
+            const totalAngle = (Math.PI / 180) * 140; 
+            const angleStep = totalAngle / (iconData.length - 1); 
+            const startAngle = -totalAngle / 2;
+            iconData.forEach((data, index) => {
+                const angle = startAngle + (index * angleStep);
+                const x = radius * Math.sin(angle);
+                const z = -radius * Math.cos(angle);
+                const iconEl = document.createElement('a-entity');
+                iconEl.classList.add('interactive-icon');
+                iconEl.setAttribute('position', `${x} 0 ${z}`);
+                iconEl.setAttribute('data-index', index);
+                const shapeWrapper = document.createElement('a-entity');
+                shapeWrapper.innerHTML = data.shape;
+                iconEl.appendChild(shapeWrapper);
+                const clickTarget = document.createElement('a-plane');
+                clickTarget.setAttribute('material', 'visible', 'false');
+                clickTarget.setAttribute('width', '2');
+                clickTarget.setAttribute('height', '2');
+                iconEl.appendChild(clickTarget);
+                container.appendChild(iconEl);
+            });
+        }
+        
+        function setupInteractions() {
+            const aimButton = document.getElementById('aimButton');
+            aimButton.addEventListener('click', () => {
+                if (currentTarget) {
+                    toggleWidget(currentTarget);
+                }
+            });
+        }
+        
+        function toggleWidget(icon) {
+            const iconIndex = parseInt(icon.getAttribute('data-index'));
+            const widgetData = iconData[iconIndex];
+            if (!widgetData) {
+                console.error("Could not find widget data for index:", iconIndex);
+                return;
+            }
+            const widgetTargetId = widgetData.widget.replace('#', '');
+            if (currentOpenWidget && currentOpenWidget.dataset.ownerId === icon.object3D.uuid) {
+                hideCurrentWidget();
+            } else {
+                showWidget(widgetTargetId, icon);
+            }
+        }
+
+        function hideCurrentWidget() {
+            if (currentOpenWidget) {
+                const widget = currentOpenWidget;
+                widget.setAttribute('animation', { property: 'scale', to: '0 0 0', dur: 300, easing: 'easeInQuad' });
+                setTimeout(() => {
+                    if (widget && widget.parentElement) {
+                        widget.parentElement.removeChild(widget);
+                    }
+                }, 300);
+                currentOpenWidget = null;
+                if (logInterval) clearInterval(logInterval);
+            }
+        }
+
+        function showWidget(widgetId, icon) {
+            hideCurrentWidget(); 
+            const widgetContainer = document.getElementById('widget-container');
+            const newWidget = document.createElement('a-entity');
+            newWidget.id = widgetId;
+            newWidget.classList.add('widget');
+            newWidget.innerHTML = widgetTemplates['#'+widgetId];
+            newWidget.dataset.ownerId = icon.object3D.uuid; 
+            const iconPosition = icon.object3D.position;
+            newWidget.setAttribute('position', `${iconPosition.x} ${iconPosition.y + 1.5} ${iconPosition.z}`);
+            newWidget.setAttribute('scale', '0 0 0');
+            widgetContainer.appendChild(newWidget);
+            setTimeout(() => {
+                const lookAtPosition = new THREE.Vector3(0, newWidget.object3D.position.y, 0);
+                newWidget.object3D.lookAt(lookAtPosition);
+                newWidget.setAttribute('animation', { property: 'scale', from: '0 0 0', to: '1 1 1', dur: 400, easing: 'easeOutBack' });
+                currentOpenWidget = newWidget;
+                initializeWidgetState(widgetId);
+                setupWidgetInteractivity(); 
+            }, 50);
+        }
+
+        function setupWidgetInteractivity() {
+            if (!currentOpenWidget) return;
+            currentOpenWidget.querySelectorAll('.clickable-tab').forEach(tab => tab.addEventListener('click', (e) => { e.stopPropagation(); switchConsoleTab(tab.dataset.tab); }));
+            currentOpenWidget.querySelectorAll('.clickable-button[data-action*="power"]').forEach(button => button.addEventListener('click', (e) => { e.stopPropagation(); updatePowerLevel(button.dataset.action === 'power-plus' ? 1 : -1); }));
+            const cycleButton = currentOpenWidget.querySelector('.clickable-button[data-action="cycle-target"]');
+            if(cycleButton) cycleButton.addEventListener('click', (e) => { e.stopPropagation(); cycleMapTarget(false); });
+        }
+        function initializeWidgetState(widgetId) {
+             if (!currentOpenWidget) return;
+            switch (widgetId) {
+                case 'widget-console':
+                    switchConsoleTab('status'); updatePowerLevel(0); break;
+                case 'widget-data':
+                    let logIndex = 0; const logTextEl = currentOpenWidget.querySelector('#log-text');
+                    if (logTextEl) {
+                        logTextEl.setAttribute('value', logMessages[0]);
+                        logInterval = setInterval(() => { logIndex = (logIndex + 1) % logMessages.length; if(logTextEl && logTextEl.isConnected) { logTextEl.setAttribute('value', logMessages[logIndex]) } else { clearInterval(logInterval) }; }, 2000);
+                    }
+                    currentOpenWidget.querySelector('#scanline')?.setAttribute('animation', { property: 'position.y', from: 0.45, to: -0.7, dur: 3000, loop: true });
+                    break;
+                case 'widget-map': cycleMapTarget(true); break;
+            }
+        }
+        function switchConsoleTab(tabName) {
+            if (!currentOpenWidget) return;
+            currentOpenWidget.querySelectorAll('.widget-page').forEach(page => page.setAttribute('visible', false));
+            currentOpenWidget.querySelectorAll('.clickable-tab').forEach(tab => tab.setAttribute('color', '#003344'));
+            currentOpenWidget.querySelector(`#console-page-${tabName}`)?.setAttribute('visible', true);
+            currentOpenWidget.querySelector(`.clickable-tab[data-tab="${tabName}"]`)?.setAttribute('color', '#005566');
+        }
+        function updatePowerLevel(change) {
+            if (!currentOpenWidget) return;
+            let level = parseInt(currentOpenWidget.getAttribute('data-power-level') || '75');
+            level = Math.max(0, Math.min(100, level + (change * 5)));
+            currentOpenWidget.setAttribute('data-power-level', level);
+            currentOpenWidget.querySelector('#power-level-text')?.setAttribute('value', `${level}%`);
+            const handleX = -0.9 + (level / 100) * 1.8;
+            currentOpenWidget.querySelector('#power-slider-handle')?.setAttribute('position', `${handleX} -0.1 0.01`);
+            currentOpenWidget.querySelector('#power-slider-handle')?.setAttribute('color', level > 80 ? '#ff4444' : level > 50 ? '#ffff00' : '#00ffff');
+        }
+        function cycleMapTarget(reset = false) {
+            if (!currentOpenWidget) return;
+            let index = parseInt(currentOpenWidget.getAttribute('data-target-index') || '0');
+            if (!reset) index = (index + 1) % mapTargets.length;
+            currentOpenWidget.setAttribute('data-target-index', index);
+            const target = mapTargets[index];
+            currentOpenWidget.querySelector('#map-reticle')?.setAttribute('animation', { property: 'position', to: `${target.x} ${target.y} 0.02`, dur: 750, easing: 'easeInOutQuad'});
+            currentOpenWidget.querySelector('#map-status-text')?.setAttribute('value', `Target ${index+1} selected.\nCoords: ${target.x.toFixed(2)}, ${target.y.toFixed(2)}`);
+        }
+        function createParticles() {
+            const container = document.getElementById('particles');
+            for (let i = 0; i < 50; i++) {
+                const p = document.createElement('a-sphere');
+                p.setAttribute('radius', Math.random() * 0.03 + 0.01);
+                p.setAttribute('color', '#00ffff');
+                p.setAttribute('opacity', Math.random() * 0.5 + 0.2);
+                p.setAttribute('position', `${(Math.random() - 0.5) * 20} ${Math.random() * 5} ${(Math.random() - 0.5) * 20}`);
+                container.appendChild(p);
+            }
+        }
+        function startFPSCounter() {
+            const el = document.getElementById('fps'); let last = performance.now();
+            function update() { const now = performance.now(); el.textContent = Math.round(1000 / (now - last)); last = now; requestAnimationFrame(update); }
+            update();
+        }
+
+        widgetTemplates["#widget-console"] = `<a-plane width="2.5" height="1.8" color="#001122" opacity="0.8"></a-plane><a-plane width="2.5" height="1.8" color="#00ffff" opacity="0.8" wireframe="true"></a-plane><a-plane width="2.4" height="0.3" position="0 0.7 0.01" color="#002233" opacity="0.7"></a-plane><a-text value="SYSTEM CONTROL PANEL" color="#00ffff" position="0 0.7 0.02" align="center" scale="0.8 0.8 0.8"></a-text><a-entity id="console-tabs" position="-0.85 0.45 0.01"><a-plane class="clickable-tab" data-tab="status" width="0.7" height="0.2" color="#005566"><a-text value="STATUS" align="center" color="white"></a-text></a-plane><a-plane class="clickable-tab" data-tab="diag" width="0.7" height="0.2" position="0.8 0 0" color="#003344"><a-text value="DIAG" align="center" color="white"></a-text></a-plane><a-plane class="clickable-tab" data-tab="power" width="0.7" height="0.2" position="1.6 0 0" color="#003344"><a-text value="POWER" align="center" color="white"></a-text></a-plane></a-entity><a-entity id="console-page-status" class="widget-page" visible="true" position="0 -0.2 0.02"><a-text value="Uplink Status: ACTIVE\nCore Temp: 62.1C\nLast Sync: 12m ago\nSystem Integrity: 99.8%" color="lime" wrap-count="30" position="-1.1 0.25 0"></a-text></a-entity><a-entity id="console-page-diag" class="widget-page" visible="false" position="0 -0.2 0.02"><a-text value="Running diagnostics...\n- Memory Check: OK\n- Q-Bit Integrity: OK\n- Network Latency: 14ms\n\nNo anomalies detected." color="white" wrap-count="35" position="-1.1 0.25 0"></a-text></a-entity><a-entity id="console-page-power" class="widget-page" visible="false" position="0 -0.2 0.02"><a-text value="Shield Power Level:" color="white" position="-1.1 0.25 0"></a-text><a-text id="power-level-text" value="75%" color="#00ffff" position="0 0.25 0" scale="1.2 1.2 1.2"></a-text><a-plane width="1.8" height="0.05" color="#003344" position="0 -0.1 0"></a-plane><a-plane id="power-slider-handle" width="0.1" height="0.2" color="#00ffff" position="0.45 -0.1 0.01"></a-plane><a-plane class="clickable-button" data-action="power-minus" width="0.2" height="0.2" position="-1.1 -0.1 0.01" color="#005566"><a-text value="-" align="center" color="white" scale="2 2 2"></a-text></a-plane><a-plane class="clickable-button" data-action="power-plus" width="0.2" height="0.2" position="1.1 -0.1 0.01" color="#005566"><a-text value="+" align="center" color="white" scale="1.5 1.5 1.5"></a-text></a-plane></a-entity>`;
+        widgetTemplates["#widget-data"] = `<a-plane width="2.5" height="1.8" color="#001122" opacity="0.8"></a-plane><a-plane width="2.5" height="1.8" color="#00ffff" opacity="0.8" wireframe="true"></a-plane><a-text value="LIVE DATA STREAM" color="#00ffff" position="0 0.7 0.02" align="center" scale="0.8 0.8 0.8"></a-text><a-text id="log-text" value="Initializing..." color="white" position="-1.1 0.4 0.02" wrap-count="38" line-height="60"></a-text><a-plane id="scanline" width="2.4" height="0.05" color="#00ffff" opacity="0.4" position="0 0.45 0.03"></a-plane>`;
+        widgetTemplates["#widget-map"] = `<a-plane width="2.5" height="1.8" color="#001122" opacity="0.8"></a-plane><a-plane width="2.5" height="1.8" color="#00ffff" opacity="0.8" wireframe="true"></a-plane><a-text value="TACTICAL MAP" color="#00ffff" position="0 0.7 0.02" align="center" scale="0.8 0.8 0.8"></a-text><a-image src="https://i.imgur.com/p1sF7x7.png" width="2.2" height="1.1" position="0 -0.1 0.01"></a-image><a-ring id="map-reticle" color="red" radius-inner="0.05" radius-outer="0.07" position="0 0 0.02" opacity="0.8"></a-ring><a-text id="map-status-text" value="Status: Awaiting command" color="white" position="-1.1 -0.7 0.02" wrap-count="30"></a-text><a-plane class="clickable-button" data-action="cycle-target" width="0.8" height="0.2" position="0.8 -0.7 0.01" color="#003344"><a-text value="CYCLE TARGET" align="center" color="white"></a-text></a-plane>`;
+    </script>
+</body>
+</html>
