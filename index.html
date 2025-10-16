@@ -1,19 +1,136 @@
 <!DOCTYPE html>
-<html lang="fa" dir="rtl">
+<html lang="en" dir="ltr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>AR Operating System v8.0 - Dynamic Target Names</title>
+    <title>AR/VR Operating System v9.9 - Final Build</title>
     <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js/aframe/build/aframe-ar.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
-        body { margin: 0; overflow: hidden; font-family: 'Courier New', monospace; }
-        #startButton { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); padding: 20px 40px; font-size: 24px; background: linear-gradient(45deg, #00ffff, #0080ff); border: 2px solid #00ffff; color: white; cursor: pointer; border-radius: 10px; box-shadow: 0 0 30px rgba(0, 255, 255, 0.5); animation: pulse 2s infinite; z-index: 1001; font-weight: bold; text-transform: uppercase; letter-spacing: 2px; text-align: center; }
-        @keyframes pulse { 0% { box-shadow: 0 0 30px rgba(0, 255, 255, 0.5); } 50% { box-shadow: 0 0 50px rgba(0, 255, 255, 0.8), 0 0 100px rgba(0, 128, 255, 0.5); } 100% { box-shadow: 0 0 30px rgba(0, 255, 255, 0.5); } }
-        #info { position: fixed; top: 10px; left: 50%; transform: translateX(-50%); color: #00ffff; background: rgba(0, 0, 0, 0.7); padding: 10px 20px; border-radius: 5px; border: 1px solid #00ffff; font-size: 14px; z-index: 1000; display: none; text-align: center; transition: all 0.3s ease; }
-        .hud { position: fixed; color: #00ffff; font-size: 12px; background: rgba(0, 0, 0, 0.5); padding: 5px; border: 1px solid #00ffff; display: none; z-index: 1000; }
-        #hudTopLeft { top: 10px; left: 10px; } #hudTopRight { top: 10px; right: 10px; } #hudBottomLeft { bottom: 10px; left: 10px; } #hudBottomRight { bottom: 10px, right: 10px; }
+        /* ELEGANT BUSINESS-CLASS RESTYLING */
+
+        :root {
+            --charcoal: #0b0b0c;
+            --graphite: #1a1a1a;
+            --platinum: #e5e5e5;
+            --gold: #cfa968;
+            --sapphire: #0066cc;
+        }
+
+        body {
+            margin: 0;
+            overflow: hidden;
+            font-family: 'Inter', 'IBM Plex Sans', 'SF Pro Display', sans-serif;
+            background-color: var(--charcoal);
+        }
+
+        #startButton {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 20px 40px;
+            font-size: 24px;
+            background: linear-gradient(145deg, var(--graphite), var(--charcoal));
+            border: 1px solid rgba(207, 169, 104, 0.4);
+            color: var(--gold);
+            cursor: pointer;
+            border-radius: 14px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.1);
+            animation: subtlePulse 3s infinite ease-in-out;
+            z-index: 1001;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-align: center;
+            text-shadow: 0 0 10px rgba(207, 169, 104, 0.3);
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        #startButton:hover {
+            transform: translate(-50%, -51%);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.6), inset 0 1px 1px rgba(255, 255, 255, 0.1);
+            border-color: var(--gold);
+        }
+
+        @keyframes subtlePulse {
+            0% { box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.1); }
+            50% { box-shadow: 0 8px 35px rgba(207, 169, 104, 0.15), inset 0 1px 1px rgba(255, 255, 255, 0.1); }
+            100% { box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.1); }
+        }
+
+        #info {
+            position: fixed;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: var(--platinum);
+            background: rgba(11, 11, 12, 0.7);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            padding: 10px 20px;
+            border-radius: 14px;
+            border: 1px solid rgba(229, 229, 229, 0.2);
+            font-size: 14px;
+            font-weight: 400;
+            z-index: 1000;
+            display: none;
+            text-align: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+
+        .hud {
+            position: fixed;
+            color: var(--platinum);
+            font-size: 12px;
+            background: rgba(11, 11, 12, 0.6);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            padding: 8px 12px;
+            border: 1px solid rgba(229, 229, 229, 0.15);
+            border-radius: 8px;
+            display: none;
+            z-index: 1000;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        #hudTopLeft { top: 90px; left: 10px; font-variant: small-caps; text-shadow: 0 0 5px rgba(229, 229, 229, 0.2); }
+        #hudTopRight { top: 10px; right: 10px; }
+        #hudBottomLeft { bottom: 10px; left: 10px; }
+        #hudBottomRight { bottom: 10px, right: 10px; }
         
+        #vrToggleButton, #langToggleButton {
+            position: fixed;
+            top: 10px;
+            padding: 8px 16px;
+            font-size: 12px;
+            font-family: 'Inter', sans-serif;
+            background: rgba(11, 11, 12, 0.6);
+            border: 1px solid rgba(207, 169, 104, 0.5);
+            color: var(--gold);
+            cursor: pointer;
+            border-radius: 8px;
+            z-index: 1001;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: none;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+        #vrToggleButton { left: 10px; }
+        #langToggleButton { top: 50px; left: 10px; }
+
+        #vrToggleButton:hover, #langToggleButton:hover {
+            background: rgba(20, 15, 5, 0.8);
+            border-color: var(--gold);
+        }
+
         #reticle {
             position: fixed;
             top: 50%;
@@ -21,13 +138,20 @@
             transform: translate(-50%, -50%);
             width: 30px;
             height: 30px;
-            border: 3px solid #00ffff;
+            border: 2px solid var(--gold);
             border-radius: 50%;
             box-sizing: border-box;
             opacity: 0.8;
             z-index: 999;
             display: none;
             pointer-events: none;
+            animation: reticlePulse 2.5s infinite ease-in-out;
+        }
+        
+        @keyframes reticlePulse {
+            0% { box-shadow: 0 0 8px rgba(207, 169, 104, 0.3), inset 0 0 8px rgba(207, 169, 104, 0.2); opacity: 0.7; }
+            50% { box-shadow: 0 0 15px rgba(207, 169, 104, 0.6), inset 0 0 12px rgba(207, 169, 104, 0.4); opacity: 0.9; }
+            100% { box-shadow: 0 0 8px rgba(207, 169, 104, 0.3), inset 0 0 8px rgba(207, 169, 104, 0.2); opacity: 0.7; }
         }
 
         #aimButton {
@@ -36,98 +160,207 @@
             left: 50%;
             transform: translateX(-50%);
             padding: 15px 30px;
-            min-width: 280px; /* Ensure button is wide enough for names */
-            font-size: 16px; /* Slightly smaller to fit names */
-            font-family: 'Courier New', monospace;
-            background: rgba(0, 20, 34, 0.8);
-            border: 2px solid #00ffff;
-            color: #00ffff;
+            min-width: 280px;
+            font-size: 16px;
+            font-family: 'Inter', sans-serif;
+            background: rgba(11, 11, 12, 0.8);
+            border: 1px solid rgba(207, 169, 104, 0.5);
+            color: var(--platinum);
             cursor: pointer;
-            border-radius: 8px;
-            box-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
+            border-radius: 14px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.4);
             z-index: 999;
-            font-weight: bold;
+            font-weight: 500;
             text-transform: uppercase;
             letter-spacing: 1px;
             display: none;
-            transition: all 0.2s ease-in-out;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
             text-align: center;
         }
-        
+
         #aimButton.active {
-            color: #90ee90;
-            border-color: #00ff00;
-            background-color: rgba(0, 50, 20, 0.9);
-            box-shadow: 0 0 25px rgba(0, 255, 0, 0.8);
+            color: var(--gold);
+            border-color: var(--gold);
+            background-color: rgba(20, 15, 5, 0.8);
+            box-shadow: 0 0 25px rgba(207, 169, 104, 0.5);
         }
+
+        #aimButton:hover {
+            border-color: var(--platinum);
+        }
+        #aimButton.active:hover {
+            border-color: #f7dca9; /* Lighter gold for hover */
+        }
+        
+        .ui-fade-in {
+            animation: fadeIn 0.8s ease-out forwards;
+            opacity: 0;
+        }
+        @keyframes fadeIn { to { opacity: 1; } }
 
     </style>
 </head>
-<body>
+<body data-lang="en">
     <button id="startButton" onclick="startAR()">INITIALIZE AR-OS</button>
-    <div id="info">Point the reticle at an object. The button will confirm the target.</div>
-    <div id="hudTopLeft" class="hud">SYSTEM: ONLINE</div>
-    <div id="hudTopRight" class="hud">FPS: <span id="fps">--</span></div>
-    <div id="hudBottomLeft" class="hud">WIDGETS: <span id="objectCount">7</span></div>
-    <div id="hudBottomRight" class="hud">MODE: INTERACTIVE</div>
+    <div id="info" class="ui-fade-in" style="animation-delay: 0.2s;"></div>
+    <button id="vrToggleButton"></button>
+    <button id="langToggleButton"></button>
+    <div id="hudTopLeft" class="hud ui-fade-in" style="animation-delay: 0.4s;"></div>
+    <div id="hudTopRight" class="hud ui-fade-in" style="animation-delay: 0.5s;">FPS: <span id="fps">--</span></div>
+    <div id="hudBottomLeft" class="hud ui-fade-in" style="animation-delay: 0.6s;"><span id="hud-widgets-label"></span>: <span id="objectCount">7</span></div>
+    <div id="hudBottomRight" class="hud ui-fade-in" style="animation-delay: 0.7s;"><span id="hud-mode-label"></span></div>
 
-    <div id="reticle"></div>
-    <button id="aimButton">PROCESS AIM</button>
+    <div id="reticle" class="ui-fade-in" style="animation-delay: 0.1s;"></div>
+    <button id="aimButton" class="ui-fade-in" style="animation-delay: 0.1s;"></button>
 
-    <a-scene 
-        id="arScene" 
-        style="display: none;" 
-        embedded 
-        arjs="sourceType: webcam; debugUIEnabled: false;" 
+    <a-scene
+        id="arScene"
+        style="display: none;"
+        embedded
+        arjs="sourceType: webcam; debugUIEnabled: false;"
         vr-mode-ui="enabled: false"
+        renderer="colorManagement: true; physicallyCorrectLights: true;"
+        fog="type: exponential; color: #0b0b0c; density: 0.005; near: 30; far: 300;"
         target-detector>
-        
-        <a-camera 
-            id="camera" 
+
+        <a-camera
+            id="camera"
             position="0 1.6 0"
             look-controls="magicWindowTrackingEnabled: true">
         </a-camera>
-        
-        <!-- MODIFIED CODE: Added rotation="0 180 0" to flip the wall to the front. -->
-        <a-cylinder 
-            position="0 1.6 0" 
+
+        <a-cylinder
+            id="ar-background"
+            position="0 1.6 -1"
             rotation="0 180 0"
-            radius="10" 
-            height="15" 
-            open-ended="true" 
-            theta-start="80" 
-            theta-length="200" 
-            material="color: #000814; side: back; shader: flat;">
+            radius="10"
+            height="15"
+            open-ended="true"
+            theta-start="80"
+            theta-length="200"
+            material="shader: standard; color: #1a1a1a; side: back; roughness: 0.8; metalness: 0.2;">
         </a-cylinder>
 
         <a-entity id="ar-world">
-            <a-light type="ambient" color="#0066ff" intensity="0.5"></a-light>
-            <a-light type="point" position="0 5 0" color="#00ffff" intensity="0.8"></a-light>
+            <a-light id="ar-ambient" type="ambient" color="#a3b4ff" intensity="0.4"></a-light>
+            <a-light id="ar-point" type="point" position="0 5 0" color="#ffe8c6" intensity="0.9" decay="2" distance="20"></a-light>
+            <a-light id="ar-hemi" type="hemisphere" groundColor="#0b0b0c" color="#4a5a96" intensity="0.5"></a-light>
             
             <a-entity id="icon-container" position="0 1.6 0"></a-entity>
             <a-entity id="widget-container" position="0 1.6 0"></a-entity>
             <a-entity id="particles"></a-entity>
+            
+            <!-- VR Environment: Initially hidden, All Procedural -->
+            <a-entity id="vr-environment" visible="false">
+                <a-sky color="#050814"></a-sky>
+                <a-entity id="stars"></a-entity>
+
+                <!-- VR-Specific Lighting -->
+                <a-light type="ambient" color="#a3b4ff" intensity="0.5"></a-light>
+                <a-light type="hemisphere" groundColor="#0b0b0c" color="#4a5a96" intensity="0.8"></a-light>
+
+                <a-entity id="procedural-city"></a-entity>
+
+                <a-circle id="vr-floor" rotation="-90 0 0" radius="12" color="#0a0a10" material="shader: standard; metalness: 0.7; roughness: 0.2;"></a-circle>
+                <a-entity id="floor-grid"></a-entity>
+
+                <!-- Architectural Elements -->
+                <a-torus id="floor-railing" radius="11.9" radius-tubular="0.1" rotation="90 0 0" position="0 0.1 0" material="shader: standard; color: #cfa968; metalness: 0.8; roughness: 0.2;"></a-torus>
+                <a-entity id="pillars">
+                    <a-box class="pillar" width="1.5" height="8" depth="0.5" position="0 4 -11.9" material="shader: standard; color: #1a1a1a; metalness: 0.9; roughness: 0.1;"></a-box>
+                    <a-box class="pillar" width="1.5" height="8" depth="0.5" position="8.4 4 -8.4" rotation="0 -45 0" material="shader: standard; color: #1a1a1a; metalness: 0.9; roughness: 0.1;"></a-box>
+                    <a-box class="pillar" width="1.5" height="8" depth="0.5" position="-8.4 4 -8.4" rotation="0 45 0" material="shader: standard; color: #1a1a1a; metalness: 0.9; roughness: 0.1;"></a-box>
+                    <a-box class="pillar" width="1.5" height="8" depth="0.5" position="11.9 4 0" rotation="0 -90 0" material="shader: standard; color: #1a1a1a; metalness: 0.9; roughness: 0.1;"></a-box>
+                    <a-box class="pillar" width="1.5" height="8" depth="0.5" position="-11.9 4 0" rotation="0 90 0" material="shader: standard; color: #1a1a1a; metalness: 0.9; roughness: 0.1;"></a-box>
+                </a-entity>
+
+                <!-- Spotlights -->
+                <a-entity id="spotlights">
+                    <a-light type="spot" angle="30" color="#FFFFFF" intensity="2" position="0 10 -11.9" target="#vr-floor" penumbra="0.5" castShadow="true"></a-light>
+                    <a-light type="spot" angle="30" color="#FFFFFF" intensity="2" position="8.4 10 -8.4" target="#vr-floor" penumbra="0.5" castShadow="true"></a-light>
+                    <a-light type="spot" angle="30" color="#FFFFFF" intensity="2" position="-8.4 10 -8.4" target="#vr-floor" penumbra="0.5" castShadow="true"></a-light>
+                </a-entity>
+            </a-entity>
         </a-entity>
     </a-scene>
     
     <script>
-        const widgetTemplates = {};
+        let currentLanguage = 'en';
+
+        // COMPREHENSIVE LANGUAGE DICTIONARY
+        const languageStrings = {
+            start_button: { en: 'INITIALIZE AR-OS', ar: 'بدء تشغيل نظام الواقع المعزز' },
+            info_text: { en: 'Point the reticle at an object. The button will confirm the target.', ar: 'وجه المؤشر إلى كائن. سيقوم الزر بتأكيد الهدف.' },
+            vr_toggle_enter_vr: { en: 'ENTER VR', ar: 'الدخول للواقع الافتراضي' },
+            vr_toggle_enter_ar: { en: 'ENTER AR', ar: 'العودة للواقع المعزز' },
+            lang_toggle: { en: 'عربي', ar: 'English' },
+            hud_system_online: { en: 'SYSTEM: ONLINE', ar: 'النظام: متصل' },
+            hud_widgets: { en: 'WIDGETS', ar: 'الأدوات' },
+            hud_mode: { en: 'MODE: INTERACTIVE', ar: 'الوضع: تفاعلي' },
+            aim_button_default: { en: 'PROCESS AIM', ar: 'معالجة الهدف' },
+            aim_button_prefix: { en: 'PROCESS:', ar: 'معالجة:' },
+            context_title: { en: 'ADD CONTEXT', ar: 'إضافة محتوى' },
+            context_upload_image: { en: 'Upload Image', ar: 'تحميل صورة' },
+            context_add_text: { en: 'Add Text Note', ar: 'إضافة ملاحظة نصية' },
+            context_image_title: { en: 'ATTACHED VISUAL', ar: 'ملف مرئي مرفق' },
+            context_text_content: { en: 'Q4 projection analysis complete. \nRevenue forecast exceeds target by 12%. \nRecommend immediate stakeholder briefing.', ar: 'اكتمل تحليل توقعات الربع الرابع.\nتتجاوز توقعات الإيرادات الهدف بنسبة 12%.\nيوصى بإحاطة أصحاب المصلحة فورًا.' },
+            
+            // Icon Names for Aim Button
+            icon_main_console: { en: "MAIN CONSOLE", ar: "وحدة التحكم الرئيسية" },
+            icon_data_sphere: { en: "DATA SPHERE", ar: "كرة البيانات" },
+            icon_network_node: { en: "NETWORK NODE", ar: "عقدة الشبكة" },
+            icon_security_pyramid: { en: "SECURITY PYRAMID", ar: "هرم الأمان" },
+            icon_orbital_ring: { en: "ORBITAL RING", ar: "الحلقة المدارية" },
+            icon_core_crystal: { en: "CORE CRYSTAL", ar: "البلورة الأساسية" },
+            icon_signal_beacon: { en: "SIGNAL BEACON", ar: "منارة الإشارة" },
+            
+            // Widget Console
+            w_console_title: { en: 'SYSTEM MENU', ar: 'قائمة النظام' },
+            w_console_integrity: { en: 'Core Integrity:', ar: 'سلامة النواة:' },
+            w_console_uplink: { en: 'Uplink Status:', ar: 'حالة الاتصال:' },
+            w_console_uplink_val: { en: 'ACTIVE', ar: 'نشط' },
+            w_console_sync: { en: 'Last Sync:', ar: 'آخر مزامنة:' },
+            w_console_sync_val: { en: '2m 15s ago', ar: 'منذ دقيقتين و 15 ثانية' },
+            w_console_res_alloc: { en: 'Resource Allocation', ar: 'تخصيص الموارد' },
+            w_console_cpu: { en: 'CPU', ar: 'المعالج' },
+            w_console_mem: { en: 'MEM', ar: 'الذاكرة' },
+            w_console_net: { en: 'NET', ar: 'الشبكة' },
+            w_console_diag_button: { en: 'Run Diagnostics', ar: 'تشغيل التشخيصات' },
+
+            // Widget Data
+            w_data_title: { en: 'LIVE DATA STREAM', ar: 'بث البيانات المباشر' },
+            w_data_log: { en: '[12:01:05] TX_ID: 8A4F.. VAL: +1.2M.. SIG: OK\n[12:01:04] TX_ID: 7B9E.. VAL: -0.8M.. SIG: OK\n[12:01:03] SYS_MSG: Quantum Handshake ACK\n[12:01:02] TX_ID: 5C1D.. VAL: +2.5M.. SIG: OK\n[12:01:01] SYS_MSG: Rerouting... OK', ar: '[12:01:05] معرف: 8A4F.. القيمة: +1.2 مليون.. الإشارة: موافق\n[12:01:04] معرف: 7B9E.. القيمة: -0.8 مليون.. الإشارة: موافق\n[12:01:03] رسالة النظام: مصافحة كمومية\n[12:01:02] معرف: 5C1D.. القيمة: +2.5 مليون.. الإشارة: موافق\n[12:01:01] رسالة النظام: إعادة توجيه... موافق' },
+            w_data_throughput: { en: 'Data Throughput (TB/s)', ar: 'إنتاجية البيانات (تيرابايت/ثانية)' },
+            w_data_visualize_button: { en: 'Visualize Dataset', ar: 'تصور مجموعة البيانات' },
+
+            // Widget Map
+            w_map_title: { en: 'NETWORK TOPOLOGY', ar: 'طوبولوجيا الشبكة' },
+            w_map_nexus: { en: 'Core Nexus', ar: 'العقدة الأساسية' },
+            w_map_firewall_button: { en: 'Firewall Matrix', ar: 'مصفوفة جدار الحماية' },
+
+            // Widget AI
+            w_ai_title: { en: 'COGNITIVE AI CORE', ar: 'نواة الذكاء الاصطناعي' },
+            w_ai_model: { en: 'Model:', ar: 'النموذج:' },
+            w_ai_model_val: { en: 'KRAKEN V3.2', ar: 'KRAKEN V3.2' },
+            w_ai_confidence: { en: 'Confidence:', ar: 'الثقة:' },
+            w_ai_queries: { en: 'Active Queries:', ar: 'الاستعلامات النشطة:' },
+            w_ai_activity: { en: 'Neural Activity', ar: 'النشاط العصبي' },
+            w_ai_train_button: { en: 'Engage Training Mode', ar: 'بدء وضع التدريب' }
+        };
+
         const iconData = [
-            { name: "MAIN CONSOLE", widget: "#widget-console", shape: '<a-box color="#001133" animation__rot="property: rotation; to: 0 360 0; dur: 10000; loop: true"></a-box>' },
-            { name: "DATA SPHERE", widget: "#widget-data", shape: '<a-sphere color="#003366" radius="0.4" wireframe="true" animation__rot="property: rotation; to: 360 0 0; dur: 8000; loop: true"></a-sphere>' },
-            { name: "NETWORK NODE", widget: "#widget-map", shape: '<a-dodecahedron color="#002244" radius="0.5" wireframe="true" animation__rot="property: rotation; to: 360 360 0; dur: 15000; loop: true"></a-dodecahedron>' },
-            { name: "SECURITY PYRAMID", widget: "#widget-console", shape: '<a-tetrahedron color="#003355" radius="0.5" animation__rot="property: rotation; to: 0 360 0; dur: 9000; loop: true"></a-tetrahedron>' },
-            { name: "ORBITAL RING", widget: "#widget-map", shape: '<a-torus color="#00ffff" radius="0.4" radius-tubular="0.1" opacity="0.6" animation__rot="property: rotation; to: 360 0 360; dur: 10000; loop: true"></a-torus>' },
-            { name: "CORE CRYSTAL", widget: "#widget-data", shape: '<a-octahedron color="#004466" radius="0.4" wireframe="true" animation__rot="property: rotation; to: 360 360 360; dur: 20000; loop: true"></a-octahedron>' },
-            { name: "SIGNAL BEACON", widget: "#widget-map", shape: '<a-cone color="#003344" radius-bottom="0.4" height="0.8" animation__rot="property: rotation; to: 0 360 0; dur: 7000; loop: true"></a-cone>' }
+            { name_key: "icon_main_console", widget: "#widget-console", shape: '<a-box color="#cfa968" material="shader: standard; roughness: 0.3; metalness: 0.7;" animation__rot="property: rotation; to: 0 360 0; dur: 10000; loop: true; easing: linear;"></a-box>' },
+            { name_key: "icon_data_sphere", widget: "#widget-data", shape: '<a-sphere color="#cfa968" radius="0.4" material="shader: standard; roughness: 0.3; metalness: 0.7; wireframe: true;" animation__rot="property: rotation; to: 360 0 0; dur: 8000; loop: true; easing: linear;"></a-sphere>' },
+            { name_key: "icon_network_node", widget: "#widget-map", shape: '<a-dodecahedron color="#cfa968" radius="0.5" material="shader: standard; roughness: 0.3; metalness: 0.7; wireframe: true;" animation__rot="property: rotation; to: 360 360 0; dur: 15000; loop: true; easing: linear;"></a-dodecahedron>' },
+            { name_key: "icon_security_pyramid", widget: "#widget-ai", shape: '<a-tetrahedron color="#cfa968" radius="0.5" material="shader: standard; roughness: 0.3; metalness: 0.7;" animation__rot="property: rotation; to: 0 360 0; dur: 9000; loop: true; easing: linear;"></a-tetrahedron>' },
+            { name_key: "icon_orbital_ring", widget: "#widget-map", shape: '<a-torus color="#e5e5e5" radius="0.4" radius-tubular="0.1" material="shader: standard; roughness: 0.1; metalness: 0.9;" animation__rot="property: rotation; to: 360 0 360; dur: 10000; loop: true; easing: linear;"></a-torus>' },
+            { name_key: "icon_core_crystal", widget: "#widget-data", shape: '<a-octahedron color="#cfa968" radius="0.4" material="shader: standard; roughness: 0.3; metalness: 0.7; wireframe: true;" animation__rot="property: rotation; to: 360 360 360; dur: 20000; loop: true; easing: linear;"></a-octahedron>' },
+            { name_key: "icon_signal_beacon", widget: "#widget-console", shape: '<a-cone color="#cfa968" radius-bottom="0.4" height="0.8" material="shader: standard; roughness: 0.3; metalness: 0.7;" animation__rot="property: rotation; to: 0 360 0; dur: 7000; loop: true; easing: linear;"></a-cone>' }
         ];
 
         let currentOpenWidget = null;
-        let logInterval = null;
-        let currentTarget = null; 
-
-        const logMessages = [ "> Encrypting...", "> Rerouting...", "> WARNING: Latency (178ms)", "> Quantum handshake...", "> Handshake successful.", "> Analyzing telemetry...", "> Anomaly detected.", "> Isolating...", ];
-        const mapTargets = [ { x: -0.8, y: 0.2 }, { x: 0.5, y: -0.3 }, { x: 0.1, y: 0.4 }];
+        let currentTarget = null;
+        let isVrMode = false;
 
         AFRAME.registerComponent('target-detector', {
             init: function () {
@@ -136,7 +369,6 @@
                 this.aimButton = document.getElementById('aimButton');
                 this.raycaster = new THREE.Raycaster();
                 this.centerScreen = new THREE.Vector2(0, 0);
-                this.defaultButtonText = "PROCESS AIM"; // Store default text
             },
             tick: function () {
                 if (!this.cameraEl || !this.iconContainer) return;
@@ -156,24 +388,65 @@
                     hitEl = tempEl;
                 }
                 
-                // --- THIS IS THE NEW DYNAMIC FEEDBACK LOGIC ---
                 if (hitEl) {
-                    // A target is being aimed at
                     currentTarget = hitEl;
                     const iconIndex = parseInt(hitEl.getAttribute('data-index'));
-                    const targetName = iconData[iconIndex].name;
-                    
-                    // Update button text and style
-                    this.aimButton.textContent = `PROCESS ${targetName}`;
+                    const targetNameKey = iconData[iconIndex].name_key;
+                    const prefix = languageStrings.aim_button_prefix[currentLanguage];
+                    const targetName = languageStrings[targetNameKey][currentLanguage];
+
+                    this.aimButton.textContent = `${prefix} ${targetName}`;
                     this.aimButton.classList.add('active');
                 } else {
-                    // Nothing is being aimed at
                     currentTarget = null;
-
-                    // Revert button text and style
-                    this.aimButton.textContent = this.defaultButtonText;
+                    this.aimButton.textContent = languageStrings.aim_button_default[currentLanguage];
                     this.aimButton.classList.remove('active');
                 }
+            }
+        });
+
+        // LUXURY MENU BUTTON COMPONENT
+        AFRAME.registerComponent('luxury-button', {
+            schema: {
+                label: { type: 'string', default: 'Button' },
+                width: { type: 'number', default: 2.2 },
+                height: { type: 'number', default: 0.3 }
+            },
+            init: function () {
+                const el = this.el;
+                const data = this.data;
+
+                el.setAttribute('animation__click', { property: 'scale', startEvents: 'click', to: '0.97 0.97 0.97', dur: 150, dir: 'alternate', easing: 'easeOutCubic' });
+
+                const background = document.createElement('a-plane');
+                background.setAttribute('width', data.width);
+                background.setAttribute('height', data.height);
+                background.setAttribute('material', 'shader: flat; color: #2a2a2a;');
+                
+                const border = document.createElement('a-plane');
+                border.setAttribute('width', data.width);
+                border.setAttribute('height', data.height);
+                border.setAttribute('material', 'shader: flat; color: #cfa968; side: back; emissive: #cfa968; emissiveIntensity: 0.4;');
+                border.setAttribute('position', '0 0 -0.001');
+
+                const text = document.createElement('a-text');
+                text.setAttribute('value', data.label);
+                text.setAttribute('align', 'center');
+                text.setAttribute('color', '#eaeaea');
+                text.setAttribute('width', 4);
+                text.setAttribute('font', 'https://fonts.gstatic.com/s/inter/v12/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuOKfAZ9hjg.woff');
+                text.setAttribute('position', '0 0 0.002');
+                
+                el.appendChild(border);
+                el.appendChild(background);
+                el.appendChild(text);
+
+                el.addEventListener('mouseenter', function () {
+                    border.setAttribute('animation__glowon', { property: 'material.emissiveIntensity', from: 0.4, to: 0.8, dur: 300, easing: 'easeOutCubic' });
+                });
+                el.addEventListener('mouseleave', function () {
+                    border.setAttribute('animation__glowoff', { property: 'material.emissiveIntensity', to: 0.4, dur: 300, easing: 'easeOutCubic' });
+                });
             }
         });
 
@@ -197,21 +470,20 @@
         
         function runApp() {
             document.getElementById('startButton').style.display = 'none';
-            document.querySelectorAll('.hud, #info, #arScene, #reticle, #aimButton').forEach(el => el.style.display = 'block');
+            document.querySelectorAll('.hud, #info, #arScene, #reticle, #aimButton, #vrToggleButton, #langToggleButton').forEach(el => el.style.display = 'block');
             createIcons();
             setupInteractions();
             startFPSCounter();
             createParticles();
+            createProceduralVrEnvironment();
+            updateUIText(); // Set initial language
         }
         
         function createIcons() {
             const container = document.getElementById('icon-container');
-            const radius = 3.5; 
-            const totalAngle = (Math.PI / 180) * 140; 
-            const angleStep = totalAngle / (iconData.length - 1); 
-            const startAngle = -totalAngle / 2;
             iconData.forEach((data, index) => {
-                const angle = startAngle + (index * angleStep);
+                const angle = -Math.PI/2.5 + (index / (iconData.length - 1)) * (Math.PI/1.25);
+                const radius = 3.5;
                 const x = radius * Math.sin(angle);
                 const z = -radius * Math.cos(angle);
                 const iconEl = document.createElement('a-entity');
@@ -231,14 +503,46 @@
         }
         
         function setupInteractions() {
-            const aimButton = document.getElementById('aimButton');
-            aimButton.addEventListener('click', () => {
+            document.getElementById('aimButton').addEventListener('click', () => {
                 if (currentTarget) {
                     toggleWidget(currentTarget);
                 }
             });
+            document.getElementById('vrToggleButton').addEventListener('click', toggleVrMode);
+            document.getElementById('langToggleButton').addEventListener('click', toggleLanguage);
+            
+            // Event delegation for context buttons
+            document.getElementById('widget-container').addEventListener('click', function(e) {
+                let targetEl = e.target;
+                while (targetEl && targetEl !== this) {
+                    if (targetEl.hasAttribute('data-action')) {
+                        handleContextAction(targetEl.getAttribute('data-action'));
+                        return;
+                    }
+                    targetEl = targetEl.parentElement;
+                }
+            });
         }
         
+        function handleContextAction(action) {
+            if (!currentOpenWidget) return;
+            const imgEl = currentOpenWidget.querySelector('.context-image-group');
+            const textEl = currentOpenWidget.querySelector('.context-text-group');
+            const buttonsEl = currentOpenWidget.querySelector('.context-buttons-group');
+
+            if (action === 'upload-image') {
+                if (imgEl && buttonsEl) {
+                    imgEl.setAttribute('visible', true);
+                    buttonsEl.setAttribute('visible', false);
+                }
+            } else if (action === 'add-text') {
+                if (textEl && buttonsEl) {
+                    textEl.setAttribute('visible', true);
+                    buttonsEl.setAttribute('visible', false);
+                }
+            }
+        }
+
         function toggleWidget(icon) {
             const iconIndex = parseInt(icon.getAttribute('data-index'));
             const widgetData = iconData[iconIndex];
@@ -246,7 +550,7 @@
                 console.error("Could not find widget data for index:", iconIndex);
                 return;
             }
-            const widgetTargetId = widgetData.widget.replace('#', '');
+            const widgetTargetId = widgetData.widget; // Use the full ID with #
             if (currentOpenWidget && currentOpenWidget.dataset.ownerId === icon.object3D.uuid) {
                 hideCurrentWidget();
             } else {
@@ -257,14 +561,17 @@
         function hideCurrentWidget() {
             if (currentOpenWidget) {
                 const widget = currentOpenWidget;
-                widget.setAttribute('animation', { property: 'scale', to: '0 0 0', dur: 300, easing: 'easeInQuad' });
+                const currentPos = widget.object3D.position;
+                const endPos = `${currentPos.x} ${currentPos.y - 0.2} ${currentPos.z}`;
+                widget.setAttribute('animation__scale', { property: 'scale', to: '0 0 0', dur: 300, easing: 'easeInCubic' });
+                widget.setAttribute('animation__position', { property: 'position', to: endPos, dur: 300, easing: 'easeInCubic' });
+
                 setTimeout(() => {
                     if (widget && widget.parentElement) {
                         widget.parentElement.removeChild(widget);
                     }
                 }, 300);
                 currentOpenWidget = null;
-                if (logInterval) clearInterval(logInterval);
             }
         }
 
@@ -272,93 +579,279 @@
             hideCurrentWidget(); 
             const widgetContainer = document.getElementById('widget-container');
             const newWidget = document.createElement('a-entity');
-            newWidget.id = widgetId;
+            newWidget.id = widgetId.replace('#',''); // Use ID without # for the element
             newWidget.classList.add('widget');
-            newWidget.innerHTML = widgetTemplates['#'+widgetId];
+            
+            const templateFn = widgetTemplates[widgetId]; // Lookup with #
+            newWidget.innerHTML = templateFn ? templateFn(currentLanguage) : '';
+
             newWidget.dataset.ownerId = icon.object3D.uuid; 
             const iconPosition = icon.object3D.position;
-            newWidget.setAttribute('position', `${iconPosition.x} ${iconPosition.y + 1.5} ${iconPosition.z}`);
+
+            const finalPositionVec = new THREE.Vector3(iconPosition.x, iconPosition.y + 2.2, iconPosition.z);
+            const startPositionVec = finalPositionVec.clone().add(new THREE.Vector3(0, -0.2, 0));
+            
+            newWidget.setAttribute('position', `${startPositionVec.x} ${startPositionVec.y} ${startPositionVec.z}`);
             newWidget.setAttribute('scale', '0 0 0');
+            
             widgetContainer.appendChild(newWidget);
+
             setTimeout(() => {
-                const lookAtPosition = new THREE.Vector3(0, newWidget.object3D.position.y, 0);
+                const lookAtPosition = new THREE.Vector3(0, finalPositionVec.y, 0);
                 newWidget.object3D.lookAt(lookAtPosition);
-                newWidget.setAttribute('animation', { property: 'scale', from: '0 0 0', to: '1 1 1', dur: 400, easing: 'easeOutBack' });
+                
+                newWidget.setAttribute('animation__scale', { property: 'scale', to: '1 1 1', dur: 400, easing: 'easeOutCubic' });
+                newWidget.setAttribute('animation__position', { property: 'position', to: `${finalPositionVec.x} ${finalPositionVec.y} ${finalPositionVec.z}`, dur: 400, easing: 'easeOutCubic' });
+
                 currentOpenWidget = newWidget;
-                initializeWidgetState(widgetId);
-                setupWidgetInteractivity(); 
             }, 50);
         }
 
-        function setupWidgetInteractivity() {
-            if (!currentOpenWidget) return;
-            currentOpenWidget.querySelectorAll('.clickable-tab').forEach(tab => tab.addEventListener('click', (e) => { e.stopPropagation(); switchConsoleTab(tab.dataset.tab); }));
-            currentOpenWidget.querySelectorAll('.clickable-button[data-action*="power"]').forEach(button => button.addEventListener('click', (e) => { e.stopPropagation(); updatePowerLevel(button.dataset.action === 'power-plus' ? 1 : -1); }));
-            const cycleButton = currentOpenWidget.querySelector('.clickable-button[data-action="cycle-target"]');
-            if(cycleButton) cycleButton.addEventListener('click', (e) => { e.stopPropagation(); cycleMapTarget(false); });
-        }
-        function initializeWidgetState(widgetId) {
-             if (!currentOpenWidget) return;
-            switch (widgetId) {
-                case 'widget-console':
-                    switchConsoleTab('status'); updatePowerLevel(0); break;
-                case 'widget-data':
-                    let logIndex = 0; const logTextEl = currentOpenWidget.querySelector('#log-text');
-                    if (logTextEl) {
-                        logTextEl.setAttribute('value', logMessages[0]);
-                        logInterval = setInterval(() => { logIndex = (logIndex + 1) % logMessages.length; if(logTextEl && logTextEl.isConnected) { logTextEl.setAttribute('value', logMessages[logIndex]) } else { clearInterval(logInterval) }; }, 2000);
-                    }
-                    currentOpenWidget.querySelector('#scanline')?.setAttribute('animation', { property: 'position.y', from: 0.45, to: -0.7, dur: 3000, loop: true });
-                    break;
-                case 'widget-map': cycleMapTarget(true); break;
+        function createProceduralVrEnvironment() {
+            const starsContainer = document.getElementById('stars');
+            for (let i = 0; i < 500; i++) {
+                const star = document.createElement('a-sphere');
+                const radius = 300;
+                const theta = 2 * Math.PI * Math.random();
+                const phi = Math.acos(2 * Math.random() - 1);
+                const x = radius * Math.sin(phi) * Math.cos(theta);
+                const y = radius * Math.sin(phi) * Math.sin(theta);
+                const z = radius * Math.cos(phi);
+                star.setAttribute('position', `${x} ${y} ${z}`);
+                star.setAttribute('radius', Math.random() * 0.4 + 0.1);
+                star.setAttribute('material', 'shader: flat; color: #FFFFFF; emissive: #FFFFFF; emissiveIntensity: 0.5;');
+                starsContainer.appendChild(star);
+            }
+            
+            const cityContainer = document.getElementById('procedural-city');
+            for (let i = 0; i < 400; i++) {
+                const building = document.createElement('a-box');
+                const angle = Math.random() * Math.PI * 2;
+                const distance = Math.random() * 100 + 40;
+                const x = Math.cos(angle) * distance;
+                const z = Math.sin(angle) * distance;
+                const height = Math.random() * 50 + 10;
+                const width = Math.random() * 5 + 2;
+                const depth = Math.random() * 5 + 2;
+                building.setAttribute('position', `${x} ${height/2} ${z}`);
+                building.setAttribute('height', height);
+                building.setAttribute('width', width);
+                building.setAttribute('depth', depth);
+                building.setAttribute('material', 'shader: standard; color: #111115; roughness: 0.8; metalness: 0.3;');
+                cityContainer.appendChild(building);
+                
+                if (Math.random() > 0.7) {
+                    const windowGroup = document.createElement('a-entity');
+                    const lightHeight = Math.random() * (height - 2) + 1;
+                    windowGroup.setAttribute('position', `0 ${lightHeight - height/2} ${depth/2 + 0.01}`);
+                    windowGroup.innerHTML = `<a-plane width="${width*0.8}" height="1.5" material="shader: flat; color: #cfa968; emissive: #cfa968; emissiveIntensity: 0.8;"></a-plane>`;
+                    building.appendChild(windowGroup);
+                }
+            }
+
+            const gridContainer = document.getElementById('floor-grid');
+            const gridSize = 12;
+            for (let i = -gridSize; i <= gridSize; i += 1.5) {
+                const lineX = document.createElement('a-box');
+                lineX.setAttribute('position', `0 0.05 ${i}`);
+                lineX.setAttribute('height', '0.02');
+                lineX.setAttribute('width', gridSize*2);
+                lineX.setAttribute('depth', '0.02');
+                lineX.setAttribute('material', 'shader: flat; color: #cfa968; emissive: #cfa968; emissiveIntensity: 0.4');
+                gridContainer.appendChild(lineX);
+
+                const lineZ = document.createElement('a-box');
+                lineZ.setAttribute('position', `${i} 0.05 0`);
+                lineZ.setAttribute('height', '0.02');
+                lineZ.setAttribute('width', '0.02');
+                lineZ.setAttribute('depth', gridSize*2);
+                lineZ.setAttribute('material', 'shader: flat; color: #cfa968; emissive: #cfa968; emissiveIntensity: 0.4');
+                gridContainer.appendChild(lineZ);
             }
         }
-        function switchConsoleTab(tabName) {
-            if (!currentOpenWidget) return;
-            currentOpenWidget.querySelectorAll('.widget-page').forEach(page => page.setAttribute('visible', false));
-            currentOpenWidget.querySelectorAll('.clickable-tab').forEach(tab => tab.setAttribute('color', '#003344'));
-            currentOpenWidget.querySelector(`#console-page-${tabName}`)?.setAttribute('visible', true);
-            currentOpenWidget.querySelector(`.clickable-tab[data-tab="${tabName}"]`)?.setAttribute('color', '#005566');
+        
+        function startFPSCounter() {
+            const el = document.getElementById('fps'); let last = performance.now(); let frames = 0;
+            function update(now) {
+                frames++;
+                if (now > last + 1000) {
+                    el.textContent = Math.round((frames * 1000) / (now - last));
+                    last = now;
+                    frames = 0;
+                }
+                requestAnimationFrame(update);
+            }
+            requestAnimationFrame(update);
         }
-        function updatePowerLevel(change) {
-            if (!currentOpenWidget) return;
-            let level = parseInt(currentOpenWidget.getAttribute('data-power-level') || '75');
-            level = Math.max(0, Math.min(100, level + (change * 5)));
-            currentOpenWidget.setAttribute('data-power-level', level);
-            currentOpenWidget.querySelector('#power-level-text')?.setAttribute('value', `${level}%`);
-            const handleX = -0.9 + (level / 100) * 1.8;
-            currentOpenWidget.querySelector('#power-slider-handle')?.setAttribute('position', `${handleX} -0.1 0.01`);
-            currentOpenWidget.querySelector('#power-slider-handle')?.setAttribute('color', level > 80 ? '#ff4444' : level > 50 ? '#ffff00' : '#00ffff');
-        }
-        function cycleMapTarget(reset = false) {
-            if (!currentOpenWidget) return;
-            let index = parseInt(currentOpenWidget.getAttribute('data-target-index') || '0');
-            if (!reset) index = (index + 1) % mapTargets.length;
-            currentOpenWidget.setAttribute('data-target-index', index);
-            const target = mapTargets[index];
-            currentOpenWidget.querySelector('#map-reticle')?.setAttribute('animation', { property: 'position', to: `${target.x} ${target.y} 0.02`, dur: 750, easing: 'easeInOutQuad'});
-            currentOpenWidget.querySelector('#map-status-text')?.setAttribute('value', `Target ${index+1} selected.\nCoords: ${target.x.toFixed(2)}, ${target.y.toFixed(2)}`);
-        }
+
         function createParticles() {
             const container = document.getElementById('particles');
             for (let i = 0; i < 50; i++) {
                 const p = document.createElement('a-sphere');
                 p.setAttribute('radius', Math.random() * 0.03 + 0.01);
-                p.setAttribute('color', '#00ffff');
-                p.setAttribute('opacity', Math.random() * 0.5 + 0.2);
+                p.setAttribute('material', 'shader: standard; emissive: #cfa968; metalness: 0.6; roughness: 0.2;');
+                p.setAttribute('emissiveIntensity', Math.random() * 0.4 + 0.1)
                 p.setAttribute('position', `${(Math.random() - 0.5) * 20} ${Math.random() * 5} ${(Math.random() - 0.5) * 20}`);
                 container.appendChild(p);
             }
         }
-        function startFPSCounter() {
-            const el = document.getElementById('fps'); let last = performance.now();
-            function update() { const now = performance.now(); el.textContent = Math.round(1000 / (now - last)); last = now; requestAnimationFrame(update); }
-            update();
+
+        function toggleVrMode() {
+            isVrMode = !isVrMode;
+            document.getElementById('vr-environment').setAttribute('visible', isVrMode);
+            document.getElementById('ar-background').setAttribute('visible', !isVrMode);
+            document.getElementById('particles').setAttribute('visible', !isVrMode);
+            document.getElementById('info').style.display = isVrMode ? 'none' : 'block';
+            document.getElementById('ar-ambient').setAttribute('visible', !isVrMode);
+            document.getElementById('ar-point').setAttribute('visible', !isVrMode);
+            document.getElementById('ar-hemi').setAttribute('visible', !isVrMode);
+
+            const arVideoPlane = document.querySelector('a-scene').object3D.children.find(obj => obj.type === 'Mesh' && obj.material.map && obj.material.map.image instanceof HTMLVideoElement);
+            if(arVideoPlane) arVideoPlane.visible = !isVrMode;
+            updateUIText();
         }
 
-        widgetTemplates["#widget-console"] = `<a-plane width="2.5" height="1.8" color="#001122" opacity="0.8"></a-plane><a-plane width="2.5" height="1.8" color="#00ffff" opacity="0.8" wireframe="true"></a-plane><a-plane width="2.4" height="0.3" position="0 0.7 0.01" color="#002233" opacity="0.7"></a-plane><a-text value="SYSTEM CONTROL PANEL" color="#00ffff" position="0 0.7 0.02" align="center" scale="0.8 0.8 0.8"></a-text><a-entity id="console-tabs" position="-0.85 0.45 0.01"><a-plane class="clickable-tab" data-tab="status" width="0.7" height="0.2" color="#005566"><a-text value="STATUS" align="center" color="white"></a-text></a-plane><a-plane class="clickable-tab" data-tab="diag" width="0.7" height="0.2" position="0.8 0 0" color="#003344"><a-text value="DIAG" align="center" color="white"></a-text></a-plane><a-plane class="clickable-tab" data-tab="power" width="0.7" height="0.2" position="1.6 0 0" color="#003344"><a-text value="POWER" align="center" color="white"></a-text></a-plane></a-entity><a-entity id="console-page-status" class="widget-page" visible="true" position="0 -0.2 0.02"><a-text value="Uplink Status: ACTIVE\nCore Temp: 62.1C\nLast Sync: 12m ago\nSystem Integrity: 99.8%" color="lime" wrap-count="30" position="-1.1 0.25 0"></a-text></a-entity><a-entity id="console-page-diag" class="widget-page" visible="false" position="0 -0.2 0.02"><a-text value="Running diagnostics...\n- Memory Check: OK\n- Q-Bit Integrity: OK\n- Network Latency: 14ms\n\nNo anomalies detected." color="white" wrap-count="35" position="-1.1 0.25 0"></a-text></a-entity><a-entity id="console-page-power" class="widget-page" visible="false" position="0 -0.2 0.02"><a-text value="Shield Power Level:" color="white" position="-1.1 0.25 0"></a-text><a-text id="power-level-text" value="75%" color="#00ffff" position="0 0.25 0" scale="1.2 1.2 1.2"></a-text><a-plane width="1.8" height="0.05" color="#003344" position="0 -0.1 0"></a-plane><a-plane id="power-slider-handle" width="0.1" height="0.2" color="#00ffff" position="0.45 -0.1 0.01"></a-plane><a-plane class="clickable-button" data-action="power-minus" width="0.2" height="0.2" position="-1.1 -0.1 0.01" color="#005566"><a-text value="-" align="center" color="white" scale="2 2 2"></a-text></a-plane><a-plane class="clickable-button" data-action="power-plus" width="0.2" height="0.2" position="1.1 -0.1 0.01" color="#005566"><a-text value="+" align="center" color="white" scale="1.5 1.5 1.5"></a-text></a-plane></a-entity>`;
-        widgetTemplates["#widget-data"] = `<a-plane width="2.5" height="1.8" color="#001122" opacity="0.8"></a-plane><a-plane width="2.5" height="1.8" color="#00ffff" opacity="0.8" wireframe="true"></a-plane><a-text value="LIVE DATA STREAM" color="#00ffff" position="0 0.7 0.02" align="center" scale="0.8 0.8 0.8"></a-text><a-text id="log-text" value="Initializing..." color="white" position="-1.1 0.4 0.02" wrap-count="38" line-height="60"></a-text><a-plane id="scanline" width="2.4" height="0.05" color="#00ffff" opacity="0.4" position="0 0.45 0.03"></a-plane>`;
-        widgetTemplates["#widget-map"] = `<a-plane width="2.5" height="1.8" color="#001122" opacity="0.8"></a-plane><a-plane width="2.5" height="1.8" color="#00ffff" opacity="0.8" wireframe="true"></a-plane><a-text value="TACTICAL MAP" color="#00ffff" position="0 0.7 0.02" align="center" scale="0.8 0.8 0.8"></a-text><a-image src="https://i.imgur.com/p1sF7x7.png" width="2.2" height="1.1" position="0 -0.1 0.01"></a-image><a-ring id="map-reticle" color="red" radius-inner="0.05" radius-outer="0.07" position="0 0 0.02" opacity="0.8"></a-ring><a-text id="map-status-text" value="Status: Awaiting command" color="white" position="-1.1 -0.7 0.02" wrap-count="30"></a-text><a-plane class="clickable-button" data-action="cycle-target" width="0.8" height="0.2" position="0.8 -0.7 0.01" color="#003344"><a-text value="CYCLE TARGET" align="center" color="white"></a-text></a-plane>`;
+        function toggleLanguage() {
+            currentLanguage = (currentLanguage === 'en') ? 'ar' : 'en';
+            document.body.dataset.lang = currentLanguage;
+            document.documentElement.setAttribute('lang', currentLanguage);
+            document.documentElement.setAttribute('dir', currentLanguage === 'ar' ? 'rtl' : 'ltr');
+            updateUIText();
+        }
+
+        function updateUIText() {
+            document.getElementById('startButton').textContent = languageStrings.start_button[currentLanguage];
+            document.getElementById('info').textContent = languageStrings.info_text[currentLanguage];
+            document.getElementById('vrToggleButton').textContent = isVrMode ? languageStrings.vr_toggle_enter_ar[currentLanguage] : languageStrings.vr_toggle_enter_vr[currentLanguage];
+            document.getElementById('langToggleButton').textContent = languageStrings.lang_toggle[currentLanguage];
+            document.getElementById('hudTopLeft').textContent = languageStrings.hud_system_online[currentLanguage];
+            document.getElementById('hud-widgets-label').textContent = languageStrings.hud_widgets[currentLanguage];
+            document.getElementById('hud-mode-label').textContent = languageStrings.hud_mode[currentLanguage];
+            document.getElementById('aimButton').textContent = languageStrings.aim_button_default[currentLanguage];
+        }
+
+        // --- TEMPLATE GENERATION FUNCTIONS ---
+        const FONT_SETTINGS = `font: https://fonts.gstatic.com/s/inter/v12/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuOKfAZ9hjg.woff; color: #eaeaea;`;
+        const HEADER_FONT_SETTINGS = `font: https://fonts.gstatic.com/s/inter/v12/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuOKfAZ9hjg.woff; color: #cfa968; align: center; width: 5; letterSpacing: 8; textTransform: uppercase;`;
+        const LABEL_FONT = (lang) => `width: 5; align: ${lang === 'ar' ? 'right' : 'left'}; color: #cfa968;`;
+        const VALUE_FONT = (lang) => `width: 5; align: ${lang === 'ar' ? 'left' : 'right'}; color: #e5e5e5;`;
+        const PANEL_BG = `shader: flat; color: #141414; transparent: true; opacity: 0.85;`;
+        const PANEL_BORDER = `shader: flat; color: #cfa968; side: back; emissive: #cfa968; emissiveIntensity: 0.4;`;
+        const CONTEXT_DIVIDER = `<a-plane width="2.2" height="0.01" material="shader: flat; color: #cfa968; opacity: 0.5;"></a-plane>`;
+        const CONTEXT_TEXT_WRAP = (lang) => lang === 'ar' ? '30' : '35';
+
+        const CONTEXT_SECTION_TEMPLATE = (lang) => `
+            <a-entity position="0 -1.5 0.02">
+                ${CONTEXT_DIVIDER}
+                <a-entity class="context-buttons-group">
+                    <a-text value="${languageStrings.context_title[lang]}" position="0 -0.2 0" ${HEADER_FONT_SETTINGS} width="6" letterSpacing="6"></a-text>
+                    <a-entity data-action="upload-image" luxury-button="label: ${languageStrings.context_upload_image[lang]}" position="0 -0.5 0"></a-entity>
+                    <a-entity data-action="add-text" luxury-button="label: ${languageStrings.context_add_text[lang]}" position="0 -0.9 0"></a-entity>
+                </a-entity>
+                <a-entity class="context-image-group" position="0 -0.6 0" visible="false">
+                    <a-text value="${languageStrings.context_image_title[lang]}" ${HEADER_FONT_SETTINGS} width="6" letterSpacing="4" position="0 0.8 0"></a-text>
+                    <a-plane width="1.5" height="1.0" color="#000000"></a-plane>
+                    <a-plane width="1.52" height="1.02" material="${PANEL_BORDER}" position="0 0 -0.01"></a-plane>
+                    <a-dodecahedron color="#cfa968" radius="0.3" position="0 0 0.1"></a-dodecahedron>
+                </a-entity>
+                 <a-entity class="context-text-group" position="0 -0.6 0" visible="false">
+                     <a-plane width="2.2" height="1.5" material="shader: flat; color: #000; opacity: 0.3;"></a-plane>
+                     <a-text value="${languageStrings.context_text_content[lang]}" ${FONT_SETTINGS} position="0 0.25 0.01" align="center" wrap-count="${CONTEXT_TEXT_WRAP(lang)}" line-height="50" width="2"></a-text>
+                </a-entity>
+            </a-entity>
+        `;
+
+        const widgetTemplates = {
+            "#widget-console": (lang) => `
+                <a-plane width="2.5" height="6.0" material="${PANEL_BG}"></a-plane>
+                <a-plane width="2.52" height="6.02" material="${PANEL_BORDER}" position="0 0 -0.01"></a-plane>
+                <a-text value="${languageStrings.w_console_title[lang]}" position="0 2.8 0.02" ${HEADER_FONT_SETTINGS}></a-text>
+                <a-entity position="${lang === 'ar' ? '1.05' : '-1.05'} 2.2 0.02">
+                    <a-text value="${languageStrings.w_console_integrity[lang]}" ${LABEL_FONT(lang)}></a-text>
+                    <a-text value="99.8%" ${VALUE_FONT(lang)} position="${lang === 'ar' ? '-2.1' : '2.1'} 0 0"></a-text>
+                    <a-text value="${languageStrings.w_console_uplink[lang]}" position="0 -0.2 0" ${LABEL_FONT(lang)}></a-text>
+                    <a-text value="${languageStrings.w_console_uplink_val[lang]}" position="${lang === 'ar' ? '-2.1' : '2.1'} -0.2 0" ${VALUE_FONT(lang)} color="#75daff"></a-text>
+                    <a-text value="${languageStrings.w_console_sync[lang]}" position="0 -0.4 0" ${LABEL_FONT(lang)}></a-text>
+                    <a-text value="${languageStrings.w_console_sync_val[lang]}" position="${lang === 'ar' ? '-2.1' : '2.1'} -0.4 0" ${VALUE_FONT(lang)}></a-text>
+                </a-entity>
+                <a-entity position="0 1.0 0.02">
+                    <a-text value="${languageStrings.w_console_res_alloc[lang]}" align="center" width="5" color="#cfa968"></a-text>
+                    <a-plane width="2.2" height="0.01" color="#cfa968" position="0 0.15 0"></a-plane>
+                    <a-plane width="0.5" height="0.6" position="-0.7 -0.3 0" color="#2a2a2a"></a-plane>
+                    <a-plane width="0.5" height="0.4" position="-0.7 -0.4 0.01" color="#cfa968"></a-plane>
+                    <a-text value="${languageStrings.w_console_cpu[lang]}" position="-0.7 -0.7 0" align="center" width="3" color="#e5e5e5"></a-text>
+                    <a-plane width="0.5" height="0.6" position="0 -0.3 0" color="#2a2a2a"></a-plane>
+                    <a-plane width="0.5" height="0.5" position="0 -0.35 0.01" color="#e5e5e5"></a-plane>
+                    <a-text value="${languageStrings.w_console_mem[lang]}" position="0 -0.7 0" align="center" width="3" color="#e5e5e5"></a-text>
+                    <a-plane width="0.5" height="0.6" position="0.7 -0.3 0" color="#2a2a2a"></a-plane>
+                    <a-plane width="0.5" height="0.2" position="0.7 -0.5 0.01" color="#cfa968"></a-plane>
+                    <a-text value="${languageStrings.w_console_net[lang]}" position="0.7 -0.7 0" align="center" width="3" color="#e5e5e5"></a-text>
+                </a-entity>
+                <a-entity luxury-button="label: ${languageStrings.w_console_diag_button[lang]}" position="0 -0.4 0.02"></a-entity>
+                ${CONTEXT_SECTION_TEMPLATE(lang)}`,
+
+            "#widget-data": (lang) => `
+                <a-plane width="2.5" height="6.0" material="${PANEL_BG}"></a-plane>
+                <a-plane width="2.52" height="6.02" material="${PANEL_BORDER}" position="0 0 -0.01"></a-plane>
+                <a-text value="${languageStrings.w_data_title[lang]}" position="0 2.8 0.02" ${HEADER_FONT_SETTINGS}></a-text>
+                <a-plane width="2.2" height="0.9" position="0 2.05 0.01" material="shader: flat; color: #000000; opacity: 0.3;"></a-plane>
+                <a-text value="${languageStrings.w_data_log[lang]}" position="${lang === 'ar' ? '1.05' : '-1.05'}" y="2.45" z="0.02" ${FONT_SETTINGS} line-height="40" wrap-count="35" align="${lang === 'ar' ? 'right' : 'left'}"></a-text>
+                <a-text value="${languageStrings.w_data_throughput[lang]}" position="0 1.2 0.02" align="center" width="5" color="#cfa968"></a-text>
+                <a-entity position="0 0.8 0.02">
+                    <a-plane width="0.02" height="0.4" position="-1 0.2 0" color="#cfa968"></a-plane>
+                    <a-plane width="0.5" height="0.02" position="-0.75 0 0" color="#cfa968"></a-plane>
+                    <a-plane width="0.5" height="0.02" position="-0.25 0.2 0" color="#cfa968"></a-plane>
+                    <a-plane width="0.5" height="0.02" position="0.25 -0.1 0" color="#cfa968"></a-plane>
+                    <a-plane width="0.5" height="0.02" position="0.75 0.1 0" color="#cfa968"></a-plane>
+                </a-entity>
+                <a-entity luxury-button="label: ${languageStrings.w_data_visualize_button[lang]}" position="0 -0.4 0.02"></a-entity>
+                ${CONTEXT_SECTION_TEMPLATE(lang)}`,
+
+            "#widget-map": (lang) => `
+                <a-plane width="2.5" height="6.0" material="${PANEL_BG}"></a-plane>
+                <a-plane width="2.52" height="6.02" material="${PANEL_BORDER}" position="0 0 -0.01"></a-plane>
+                <a-text value="${languageStrings.w_map_title[lang]}" position="0 2.8 0.02" ${HEADER_FONT_SETTINGS}></a-text>
+                <a-entity position="0 1.5 0.02">
+                    <a-circle position="0 0 0" radius="0.3" color="#cfa968"></a-circle>
+                    <a-text value="${languageStrings.w_map_nexus[lang]}" position="0 0 0.01" align="center" width="4" color="#1a1a1a"></a-text>
+                    <a-circle position="-0.8 0.6 0" radius="0.15" color="#e5e5e5"></a-circle>
+                    <a-plane width="0.7" height="0.02" position="-0.4 0.3 0" rotation="0 0 -45" color="#cfa968"></a-plane>
+                    <a-plane width="0.1" height="0.1" position="-0.8 0.75 0.01" color="#42f560"></a-plane>
+                    <a-circle position="0.9 0.5 0" radius="0.15" color="#e5e5e5"></a-circle>
+                    <a-plane width="0.8" height="0.02" position="0.45 0.25 0" rotation="0 0 30" color="#cfa968"></a-plane>
+                    <a-plane width="0.1" height="0.1" position="0.9 0.65 0.01" color="#42f560"></a-plane>
+                    <a-circle position="0 -0.9 0" radius="0.15" color="#e5e5e5"></a-circle>
+                    <a-plane width="0.7" height="0.02" position="0 -0.45 0" rotation="0 0 90" color="#cfa968"></a-plane>
+                    <a-plane width="0.1" height="0.1" position="0 -1.05 0.01" color="#f54e42"></a-plane>
+                </a-entity>
+                <a-entity luxury-button="label: ${languageStrings.w_map_firewall_button[lang]}" position="0 -0.4 0.02"></a-entity>
+                ${CONTEXT_SECTION_TEMPLATE(lang)}`,
+            
+            "#widget-ai": (lang) => `
+                <a-plane width="2.5" height="6.0" material="${PANEL_BG}"></a-plane>
+                <a-plane width="2.52" height="6.02" material="${PANEL_BORDER}" position="0 0 -0.01"></a-plane>
+                <a-text value="${languageStrings.w_ai_title[lang]}" position="0 2.8 0.02" ${HEADER_FONT_SETTINGS}></a-text>
+                 <a-entity position="${lang === 'ar' ? '1.05' : '-1.05'} 2.2 0.02">
+                    <a-text value="${languageStrings.w_ai_model[lang]}" ${LABEL_FONT(lang)}></a-text>
+                    <a-text value="${languageStrings.w_ai_model_val[lang]}" ${VALUE_FONT(lang)} position="${lang === 'ar' ? '-2.1' : '2.1'} 0 0"></a-text>
+                    <a-text value="${languageStrings.w_ai_confidence[lang]}" position="0 -0.2 0" ${LABEL_FONT(lang)}></a-text>
+                    <a-text value="98.7%" position="${lang === 'ar' ? '-2.1' : '2.1'} -0.2 0" ${VALUE_FONT(lang)} color="#cfa968"></a-text>
+                    <a-text value="${languageStrings.w_ai_queries[lang]}" position="0 -0.4 0" ${LABEL_FONT(lang)}></a-text>
+                    <a-text value="14" position="${lang === 'ar' ? '-2.1' : '2.1'} -0.4 0" ${VALUE_FONT(lang)}></a-text>
+                </a-entity>
+                <a-entity position="0 0.9 0.02">
+                    <a-text value="${languageStrings.w_ai_activity[lang]}" position="0 0.2 0" align="center" width="5" color="#cfa968"></a-text>
+                    <a-ring color="#cfa968" radius-inner="0.3" radius-outer="0.32" opacity="0.5">
+                        <a-animation attribute="scale" from="1 1 1" to="2 2 2" dur="1500" easing="linear" repeat="indefinite"></a-animation>
+                        <a-animation attribute="opacity" from="0.5" to="0" dur="1500" easing="linear" repeat="indefinite"></a-animation>
+                    </a-ring>
+                    <a-ring color="#cfa968" radius-inner="0.5" radius-outer="0.52" opacity="0.8">
+                         <a-animation attribute="scale" from="1 1 1" to="1.5 1.5 1.5" dur="2000" easing="ease-in-out" repeat="indefinite" dir="alternate"></a-animation>
+                    </a-ring>
+                </a-entity>
+                <a-entity luxury-button="label: ${languageStrings.w_ai_train_button[lang]}" position="0 -0.4 0.02"></a-entity>
+                ${CONTEXT_SECTION_TEMPLATE(lang)}`
+        };
     </script>
 </body>
 </html>
